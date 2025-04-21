@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wrap and Nap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header {
+      background: #6a5acd; color: white; padding: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .left-icons { display: flex; align-items: center; gap: 10px; }
+    .profile, .cart {
+      cursor: pointer; font-size: 24px;
+    }
+    .cart-count {
+      background: red; color: white; border-radius: 50%;
+      padding: 2px 6px; font-size: 12px; margin-left: 4px;
+    }
+    .products {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px; padding: 2rem;
+    }
+    .product {
+      border: 1px solid #ccc; border-radius: 10px; padding: 1rem; text-align: center;
+      box-shadow: 2px 2px 12px #ddd;
+    }
+    .product button {
+      margin-top: 10px; padding: 10px 20px;
+      background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;
+    }
+    .buy-now {
+      background: #ff4500;
+    }
+    section { padding: 2rem; }
+    #profile-page, #cart-page, #payment-page, #utr-page, #admin-page, #order-status-page {
+      display: none;
+    }
+    input, button {
+      width: 100%; margin: 10px 0; padding: 10px;
+      border-radius: 5px; border: 1px solid #aaa;
+    }
+    #admin-page table, #order-status-page table {
+      width: 100%; border-collapse: collapse;
+    }
+    #admin-page th, #admin-page td, #order-status-page th, #order-status-page td {
+      border: 1px solid #ccc; padding: 10px;
+    }
+    #admin-page th, #order-status-page th {
+      background: #f2f2f2;
+    }
+    footer {
+      background:#f2f2f2; padding: 1rem; text-align: center; font-size: 14px; color: #555;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="left-icons">
+    <div class="profile" onclick="openProfile()">👤</div>
+    <h1>Wrap and Nap</h1>
+  </div>
+  <div class="cart" onclick="openCart()">🛒 <span class="cart-count" id="cart-count">0</span></div>
+</header>
+
+<section class="products" id="products">
+  <div class="product">
+    <h2>Pillow</h2>
+    <img src="https://i.ibb.co/NdWC8pvz/down-pillow-pile-scooms-739b37d2-6a9c-478d-aaaa-cbe8f3d88dc0-1500x.jpg" alt="Pillow" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px;">
+    <p>₹100</p>
+    <button onclick="addToCart('Pillow', 100)">Add to Cart</button>
+    <button class="buy-now" onclick="buyNow('Pillow', 100)">Buy Now</button>
+  </div>
+  <div class="product">
+    <h2>Bedsheet</h2>
+    <img src="https://i.ibb.co/yJdg1JL/images.jpg" alt="Bedsheet" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px;">
+    <p>₹200</p>
+    <button onclick="addToCart('Bedsheet', 200)">Add to Cart</button>
+    <button class="buy-now" onclick="buyNow('Bedsheet', 200)">Buy Now</button>
+  </div>
+  <div class="product">
+    <h2>Carpet</h2>
+    <img src="https://i.ibb.co/DHh9DKDC/92-152-cp4056-story-home-original-imagztc2rmhcf5rz.jpg" alt="Carpet" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px;">
+    <p>₹300</p>
+    <button onclick="addToCart('Carpet', 300)">Add to Cart</button>
+    <button class="buy-now" onclick="buyNow('Carpet', 300)">Buy Now</button>
+  </div>
+  <div class="product">
+    <h2>Kambal</h2>
+    <img src="https://i.ibb.co/kgczrRFr/71rpjgx-SIi-L.jpg" alt="Kambal" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px;">
+    <p>₹400</p>
+    <button onclick="addToCart('Kambal', 400)">Add to Cart</button>
+    <button class="buy-now" onclick="buyNow('Kambal', 400)">Buy Now</button>
+  </div>
+  <div class="product">
+    <h2>Curtain</h2>
+    <img src="https://i.ibb.co/21MPn3X4/1117-Wx1400-H-462475223-red-MODEL.jpg" alt="Curtain" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px;">
+    <p>₹500</p>
+    <button onclick="addToCart('Curtain', 500)">Add to Cart</button>
+    <button class="buy-now" onclick="buyNow('Curtain', 500)">Buy Now</button>
+  </div>
+  <br><br>
+  <button onclick="openAdmin()">Open Admin Panel</button>
+</section>
+
+<section id="profile-page">
+  <h2>Your Profile</h2>
+  <input type="text" id="name" placeholder="Name">
+  <input type="text" id="phone" placeholder="Phone">
+  <input type="text" id="landmark" placeholder="Landmark">
+  <input type="text" id="pincode" placeholder="Pincode">
+  <input type="text" id="town" placeholder="Town/Village">
+  <button onclick="saveProfile()">Save Profile</button>
+  <button onclick="openOrderStatus()">My Orders</button>
+  <button onclick="goHome()">Back</button>
+</section>
+
+<section id="cart-page">
+  <h2>Your Cart</h2>
+  <ul id="cart-items"></ul>
+  <h3>Total: ₹<span id="cart-total">0</span></h3>
+  <button onclick="proceedToPayment()">Proceed to Payment</button>
+  <button onclick="goHome()">Back</button>
+</section>
+
+<section id="payment-page">
+  <h2>Scan to Pay</h2>
+  <canvas id="qr"></canvas>
+  <button onclick="openUpi()">Tap to Pay</button>
+  <button onclick="openUtr()">I Paid</button>
+</section>
+
+<section id="utr-page">
+  <h2>Enter UTR Number</h2>
+  <input type="text" id="utr" placeholder="UTR Number">
+  <button onclick="submitOrder()">Submit</button>
+</section>
+
+<section id="admin-page">
+  <h2>Admin Panel</h2>
+  <table id="admin-table">
+    <tr>
+      <th>Name</th><th>Phone</th><th>Landmark</th><th>Pincode</th><th>Town</th><th>Products</th><th>UTR</th><th>Status</th><th>Actions</th>
+    </tr>
+  </table>
+  <button onclick="goHome()">Back</button>
+</section>
+
+<section id="order-status-page">
+  <h2>My Orders</h2>
+  <table id="order-status-table">
+    <tr>
+      <th>Products</th><th>UTR</th><th>Status</th>
+    </tr>
+  </table>
+  <button onclick="goHome()">Back</button>
+</section>
+
+<footer>
+  <p>Contact us at: <a href="mailto:prajjwalmaurya218@gmail.com">prajjwalmaurya218@gmail.com</a></p>
+</footer>
+
+<script>
+  let cart = [];
+  let orders = JSON.parse(localStorage.getItem('orders')) || [];
+  let upiUrl = "";
+  let userProfile = JSON.parse(localStorage.getItem('profile')) || {};
+
+  function addToCart(name, price) {
+    cart.push({name, price});
+    document.getElementById('cart-count').textContent = cart.length;
+  }
+
+  function buyNow(name, price) {
+    cart = [{name, price}];
+    document.getElementById('cart-count').textContent = "1";
+    proceedToPayment();
+  }
+
+  function openProfile() {
+    hideAll();
+    document.getElementById('profile-page').style.display = 'block';
+    loadProfile();
+  }
+
+  function openCart() {
+    hideAll();
+    document.getElementById('cart-page').style.display = 'block';
+    displayCart();
+  }
+
+  function saveProfile() {
+    userProfile = {
+      name: document.getElementById('name').value,
+      phone: document.getElementById('phone').value,
+      landmark: document.getElementById('landmark').value,
+      pincode: document.getElementById('pincode').value,
+      town: document.getElementById('town').value
+    };
+    localStorage.setItem('profile', JSON.stringify(userProfile));
+    alert('Profile saved!');
+    goHome();
+  }
+
+  function loadProfile() {
+    document.getElementById('name').value = userProfile.name || '';
+    document.getElementById('phone').value = userProfile.phone || '';
+    document.getElementById('landmark').value = userProfile.landmark || '';
+    document.getElementById('pincode').value = userProfile.pincode || '';
+    document.getElementById('town').value = userProfile.town || '';
+  }
+
+  function displayCart() {
+    let list = document.getElementById('cart-items');
+    list.innerHTML = '';
+    let total = 0;
+    cart.forEach(item => {
+      let li = document.createElement('li');
+      li.textContent = item.name + " - ₹" + item.price;
+      list.appendChild(li);
+      total += item.price;
+    });
+    document.getElementById('cart-total').textContent = total;
+  }
+
+  function proceedToPayment() {
+    if (cart.length === 0) {
+      alert('Cart is empty');
+      return;
+    }
+    if (!userProfile.name || !userProfile.phone || !userProfile.landmark || !userProfile.pincode || !userProfile.town) {
+      alert('Please fill your profile details first.');
+      openProfile();
+      return;
+    }
+    hideAll();
+    document.getElementById('payment-page').style.display = 'block';
+    let amount = cart.reduce((sum, item) => sum + item.price, 0);
+    upiUrl = `upi://pay?pa=manjumaurya0002@oksbi&pn=WrapAndNap&am=${amount}&cu=INR`;
+    new QRious({
+      element: document.getElementById('qr'),
+      value: upiUrl,
+      size: 250
+    });
+  }
+
+  function openUpi() {
+    window.location.href = upiUrl.replace("upi://", "intent://") + "#Intent;scheme=upi;package=com.phonepe.app;end;";
+  }
+
+  function openUtr() {
+    hideAll();
+    document.getElementById('utr-page').style.display = 'block';
+  }
+
+  function submitOrder() {
+    let utr = document.getElementById('utr').value.trim();
+    if (!utr) {
+      alert('Please enter UTR number.');
+      return;
+    }
+    if (!userProfile.name || !userProfile.phone || !userProfile.landmark || !userProfile.pincode || !userProfile.town) {
+      alert('Please fill your profile details first.');
+      openProfile();
+      return;
+    }
+    orders.push({
+      ...userProfile,
+      products: cart.map(c => c.name).join(", "),
+      utr,
+      status: "Pending"
+    });
+    localStorage.setItem('orders', JSON.stringify(orders));
+    cart = [];
+    document.getElementById('cart-count').textContent = "0";
+    alert('Order submitted!');
+    goHome();
+  }
+
+  function openAdmin() {
+    let code = prompt('Enter Admin Code:');
+    if (code === '12345') {
+      hideAll();
+      document.getElementById('admin-page').style.display = 'block';
+      updateAdmin();
+    } else {
+      alert('Wrong Code!');
+    }
+  }
+
+  function updateAdmin() {
+    let table = document.getElementById('admin-table');
+    table.innerHTML = `<tr><th>Name</th><th>Phone</th><th>Landmark</th><th>Pincode</th><th>Town</th><th>Products</th><th>UTR</th><th>Status</th><th>Actions</th></tr>`;
+    orders.forEach((order, i) => {
+      table.innerHTML += `<tr>
+        <td>${order.name}</td>
+        <td>${order.phone}</td>
+        <td>${order.landmark}</td>
+        <td>${order.pincode}</td>
+        <td>${order.town}</td>
+        <td>${order.products}</td>
+        <td>${order.utr}</td>
+        <td>${order.status}</td>
+        <td>
+          <button onclick="approve(${i})">Approve</button>
+          <button onclick="reject(${i})">Reject</button>
+        </td>
+      </tr>`;
+    });
+  }
+
+  function approve(i) {
+    orders[i].status = "Approved";
+    localStorage.setItem('orders', JSON.stringify(orders));
+    updateAdmin();
+  }
+
+  function reject(i) {
+    orders[i].status = "Rejected";
+    localStorage.setItem('orders', JSON.stringify(orders));
+    updateAdmin();
+  }
+
+  function openOrderStatus() {
+    hideAll();
+    document.getElementById('order-status-page').style.display = 'block';
+    let table = document.getElementById('order-status-table');
+    table.innerHTML = `<tr><th>Products</th><th>UTR</th><th>Status</th></tr>`;
+    orders.forEach(order => {
+      table.innerHTML += `<tr>
+        <td>${order.products}</td>
+        <td>${order.utr}</td>
+        <td>${order.status}</td>
+      </tr>`;
+    });
+  }
+
+  function hideAll() {
+    document.querySelectorAll('section').forEach(section => section.style.display = 'none');
+  }
+
+  function goHome() {
+    hideAll();
+    document.getElementById('products').style.display = 'grid';
+  }
+</script>
+
+</body>
+</html>
